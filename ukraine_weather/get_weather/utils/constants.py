@@ -5,3 +5,4 @@ APPID = "a950f3f915d9558eac4bf9ddaf210fdc"
 LINK = "http://api.openweathermap.org/data/2.5/find"
 RESPONSE = []
 RES = []
+LAST_NAME = ""
