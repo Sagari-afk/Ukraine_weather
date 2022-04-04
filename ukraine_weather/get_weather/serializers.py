@@ -1,14 +1,9 @@
 from rest_framework import serializers
 
-from get_weather.models import WeatherNow
+from get_weather.models import WeatherNow, City
 
 
 class WeatherNowSerializer(serializers.ModelSerializer):
-    city = serializers.CharField()
-    date_time = serializers.CharField()
-    weather = serializers.CharField()
-    description = serializers.CharField()
-
     class Meta:
         model = WeatherNow
         fields = ("city", "date_time", "weather", "description")
@@ -28,3 +23,25 @@ class WeatherNowSerializer(serializers.ModelSerializer):
             )
         return validated_data
 
+
+class CitySerializer(serializers.ModelSerializer):
+    city = serializers.CharField(source="name")
+
+    class Meta:
+        model = City
+        fields = ("city",)
+
+    def validate(self, data):
+        print(f"#### city Data before validation: {data}")
+        validated_data = super().validate(data)
+        print(f"#### city Data after validation: {validated_data}")
+        cit = validated_data.get("city")
+        try:
+            City.objects.get(name=cit)
+        except City.DoesNotExist:
+            print(f"{cit} DoesNotExist in db")
+        else:
+            raise serializers.ValidationError(
+                {"error": f"{cit} already exists in db"}
+            )
+        return validated_data
